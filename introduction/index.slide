@@ -1,0 +1,390 @@
+SoftServe Golang Boot Camp
+
+Igor Kolinko
+SoftServe
+
+Igor Progoga
+SoftServe
+
+
+
+
+
+* Содержание
+
+
+* Содержание
+Немного истории Golang
+Основы языка
+
+
+
+* Немного истории
+.image ./images/sensey.jpg
+* История. Языки программирования.
+1972 - C
+1980 - C++
+1987 - Perl
+1987 - Erlang
+1991 - Python
+1993 - Ruby
+1995 - PHP
+1995 - Java
+1995 - JavaScript
+2001 - C#
+2003 - Scala
+2009 - Go
+2010 - Rust
+2014 - Swift
+
+* История. Закон Мура?
+.image ./images/CPU.jpg
+
+
+* История. Go?
+
+"Go (often referred to as golang) is an open source programming language
+created at Google in 2007 by Robert Griesemer, Rob Pike, and Ken Thompson. It
+is a compiled, statically typed language in the tradition of Algol and C, with
+garbage collection, limited structural typing, memory safety features and
+CSP-style concurrent programming features added."
+
+.link https://en.wikipedia.org/wiki/Go_(programming_language) Go Programming Language @ Wikipedia
+
+
+* Language genesis
+
+Разработка началась в 2007.
+
+Разработчики:
+- Robert Griesemer, Rob Pike, Ken Thompson
+- позднее: Ian Lance Taylor, Russ Cox
+
+Первая доступная версия Ноябрь 2009.
+
+Go 1 вышел в 2012.
+
+
+* Особенности
+    Компилируемый
+    Сборщик Мусора
+    CSP-style асинхронная модель
+
+
+
+
+* Базовые типы
+
+* Базовые типы: Целые числа
+.code ./support/integer.go /START1/,/STOP1/
+.play ./support/integer.go /START2/,/STOP2/
+
+* Базовые типы: Целые числа
+.play ./support/integerMinMax.go /START1/,/STOP1/
+
+
+* Базовые типы: Числа с плавающей точкой
+.code ./support/float.go /START1/,/STOP1/
+.play ./support/float.go /START2/,/STOP2/
+
+* Комплексные числа:
+.code ./support/complex.go /START1/,/STOP1/
+.play ./support/complex.go /START2/,/STOP2/
+
+
+* Базовые типы: Булевый тип
+.code ./support/bool.go /START1/,/STOP1/
+.play ./support/bool.go /START2/,/STOP2/
+
+* Базовые типы: Строки
+.code ./support/strings.go /START1/,/STOP1/
+.play ./support/strings.go /START2/,/STOP2/
+
+
+
+
+
+* Constants
+
+* Constants
+
+Constants are expressions whose value is known to the compiler and whose evaluation is guaranteed to occur at compile time, not at run time.
+The underlying type of each constant is a basic type: boolean, string, number.
+
+Constant declaration:
+
+    const pi = 3.1415
+
+Constant declaration in a block:
+
+    const (
+        e               = 2.71828
+        apéry           = 1.2020569
+        eulerMascheroni = 0.57721
+    )
+
+* Constants
+
+Magic declaration:
+
+    const (
+        a = 1
+        b
+        c = 2
+        d
+    )
+
+    fmt.Println(a, b, c, d) // => 1, 1, 2, 2
+
+* Constants: iota
+
+iota is a constant generator, used to create a sequence of related values without spelling out each one explicitly.
+
+Classic exmaple:
+
+    type Weekday int
+
+    const (
+        Sunday Weekday = iota
+        Monday
+        Tuesday
+        Wednesday
+        Thursday
+        Friday
+        Saturday
+    )
+
+
+
+
+* Assignability
+
+A value x is assignable to a variable of type T ("x is assignable to T") in any of these cases:
+
+- x's type is identical to T.
+- x's type V and T have identical underlying types and at least one of V or T is not a named type.
+- T is an interface type and x implements T.
+- x is a bidirectional channel value, T is a channel type, x's type V and T have identical element types, and at least one of V or T is not a named type.
+- x is the predeclared identifier nil and T is a pointer, function, slice, map, channel, or interface type.
+- x is an untyped constant representable by a value of type T.
+
+
+
+
+* Composite types
+
+* Composite types: Arrays
+
+An array is a numbered sequence of elements of a single type with a fixed length.
+They look like this:
+
+    var arr [4]int
+
+In memory it's looking like this:
+
+    .image ./array-memory-representation.png
+
+Go's arrays are values. An array variable denotes the entire array.
+It is not a pointer to the first array element.
+When you assign or pass around an array value you will make a copy of its contents
+
+
+
+
+* Composite types: Slices
+
+Slice type has no specified length
+Slice declaration:
+
+    sl := []int{1, 2, 3, 4, 5}
+
+Slice can be created with make function, which receives slice length and capacity
+
+    	var s []int
+    	s = make([]int, 5, 10)
+    	s[2] = 1
+    	fmt.Println(s) // => [0 0 1 0 0]
+
+Length and capacity of the slice can be accepted with cap() and len() functions:
+
+        len(s) // => 5
+        cap(s) // => 10
+
+
+
+
+* Composite types: Slicing slices
+
+A slice can also be formed by "slicing" an existing slice or array.
+Slicing is done by specifying a half-open range with two indices separated by a colon:
+
+    b := []byte{'g', 'o', 'l', 'a', 'n', 'g'}
+    // b[1:4] is []byte{'o', 'l', 'a'}
+
+The start and end indices of a slice expression are optional:
+
+    b[:2] is []byte{'g', 'o'}
+    b[2:] is []byte{'l', 'a', 'n', 'g'}
+    b[:]  is b
+
+
+
+
+
+
+* Composite types: Slice internals
+
+    .html ./slice-internals.html
+
+
+
+
+* Composite types: Growing slices
+
+To increase the capacity of a slice one must create a new, larger slice and copy the contents of the original slice into it:
+
+    t := make([]byte, len(s), (cap(s)+1)*2)
+    for i := range s { t[i] = s[i] }
+    s = t
+
+Using copy(), we can simplify the code snippet above:
+
+    t := make([]byte, len(s), (cap(s)+1)*2)
+    copy(t, s)
+    s = t
+
+The append() adds the elements x to the end of the slice s, and grows the slice if a greater capacity is needed:
+
+    a := make([]int, 1)     // a is []int{0}
+    a = append(a, 1, 2, 3)  // a is []int{0, 1, 2, 3}
+
+* Composite types: Growing slices
+
+To append one slice to another, use ... to expand the second argument to a list of arguments:
+
+    a := []string{"John", "Paul"}
+    b := []string{"George", "Ringo", "Pete"}
+
+    a = append(a, b...) // equivalent to "append(a, b[0], b[1], b[2])"
+
+    // a is []string{"John", "Paul", "George", "Ringo", "Pete"}
+
+
+
+
+
+* Composite types: Maps
+
+A map is an unordered collection of key-value pairs.
+Declaring map:
+
+    var m map[string]int
+
+    .image ./map-scheme.png
+
+So we can go nuts:
+
+    var mm map[string]map[string]map[string]int
+
+
+* Composite types: Maps
+
+Initialising a map:
+
+    elements := map[string]string {
+        "H":  "Hydrogen",
+        "He": "Helium",
+        "Li": "Lithium",
+        "Be": "Beryllium",
+        // ...
+    }
+
+More complex map initialisation:
+
+    elementsAttributes := map[string]map[string]string{
+        "H": map[string]string{
+          "name":"Hydrogen",
+          "state":"gas",
+        },
+        "He": map[string]string{
+          "name":"Helium",
+          "state":"gas",
+        },
+        // ...
+    }
+
+
+* Composite types: Maps
+
+We can add key-pair to a map:
+
+    elements["C"] = "Carbon"
+
+You can examine element existence with:
+
+    element, ok := elements["He"]
+    if ok {
+        println(element)
+    }
+
+Use delete() to delete key-pair:
+
+    delete(elements, "He")
+
+
+
+
+
+* Composite types: Structs
+
+A struct is a type which contains named fields.
+
+Example struct declaration:
+
+    type Rectangular struct {
+        Width int
+        Height int
+    }
+
+Short declaration:
+
+    type Rectangular struct {
+        Width, Height int
+    }
+
+Anonymous structure declaration:
+
+    var rect = struct {
+        Width, Height int
+    } { 1, 2 }
+
+
+* Composite types: Structs - initialisation
+
+We can create an instance of our new Rectangular type in a variety of ways:
+
+    var r Rectangular
+
+This will create a local Rectangular variable that is by default set to zero.
+
+To allocate memory for all the fields, set each of them to their zero value and returns a pointer (*Rectangular):
+
+    r := new(Rectangular)
+
+More often we want to give each of the fields a value:
+
+    r := Rectangular{Width: 200, Height: 300}
+
+Or we can leave off the field names if we know the order they were defined:
+
+    r := Rectangular{200, 300}
+
+
+* Composite types: Structs - fields
+
+We can access fields using the . operator:
+
+    println(r.Width)
+    r.Width = 420
+
+.image ./tim-and-eric-mind-blown.gif
