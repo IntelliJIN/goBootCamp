@@ -202,3 +202,30 @@ Magic declaration:
 
 .code ./support/mapsTwo.go /START1/,/STOP1/
 .play ./support/mapsTwo.go /START2/,/STOP2/
+
+* Указатели
+Указатели "указывают" на участок в памяти, где хранится значение
+
+.code ./support/pointer.go /START1/,/STOP1/
+.play ./support/pointer.go /START2/,/STOP2/
+
+* Инструкции
+
+* Инструкции. If
+
+.play ./support/if.go /START1/,/STOP1/
+
+* Инструкции. For
+.code ./support/for.go /START1/,/STOP1/
+.play ./support/for.go /START2/,/STOP2/
+
+
+* Инструкции. For range
+.code ./support/forRange.go /START1/,/STOP1/
+.play ./support/forRange.go /START2/,/STOP2/
+
+* Инструкции. Switch
+.play ./support/switch.go /START1/,/STOP1/
+
+* Инструкции. Switch
+.play ./support/switchType.go /START1/,/STOP1/
