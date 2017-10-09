@@ -10,8 +10,7 @@ import (
 
 func main() {
 	// START1 OMIT
-	// числа с плавающей точкой
-	var defaultFloat float32 // float = float32, float64
+	var defaultFloat float32
 	floatVar := 5.5
 	// STOP1 OMIT
 	// START2 OMIT

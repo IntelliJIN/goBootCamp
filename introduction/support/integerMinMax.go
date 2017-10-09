@@ -20,7 +20,7 @@ func main() {
 	fmt.Printf("uint8:  [0, %v]\n", math.MaxUint8)
 	fmt.Printf("uint16: [0, %v]\n", math.MaxUint16)
 	fmt.Printf("uint32: [0, %v]\n", math.MaxUint32)
-	fmt.Printf("uint64: [0, %v]\n", ^uint64(0))
+	fmt.Printf("uint64: [0, %v]\n", uint64(math.MaxUint64))
 
 	//Синонимы целых типов
 	fmt.Println("byte    - int8")
