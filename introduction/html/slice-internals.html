@@ -1,0 +1,46 @@
+<style>
+    .l, .r {
+        width: 45%;
+        float: left;
+        padding-top: 20px;
+        margin-top: 30px;
+    }
+
+    .l {
+        border-right: 1px solid #ccc;
+    }
+
+    .r {
+        padding-left: 5%;
+    }
+
+    .w100 {
+        width: 100%;
+        float: none;
+        clear: both;
+        padding-top:40px;
+    }
+    
+    code {
+        background: lightgoldenrodyellow;
+    }
+</style>
+
+<div class="l">
+    <small>
+        Slice это описание сегмента Array<br>
+        он состоит из ссылки на array, <br>
+        длинны сегмента и емкости<br>
+        (максимальная длинна сегмента):
+    </small>
+    <br><br>
+    <img src="./images/slice-internals.png" alt="">
+</div>
+
+<div class="r">
+    <small>
+        Переменная <code>s := make([]byte, 5) </code>:
+    </small>
+    <br><br>
+    <img src="./images/slice-internals-s.png" alt="">
+</div>

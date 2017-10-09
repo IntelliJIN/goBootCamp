@@ -1,0 +1,83 @@
+SoftServe Golang Boot Camp
+
+Igor Kolinko
+SoftServe
+
+Igor Prozhoha
+SoftServe
+
+* Go Concurrency Patterns
+.image ./images/big.png
+
+
+* Ping-Pong
+.play ./support/ping-pong.go /STARTMAIN1/,/STOPMAIN1/
+
+
+* Ping-Pong
+.image ./images/pingpong.gif
+
+
+* Ping-Pong
+        go player("ping", table)
+        go player("pong", table)
+        go player("ping-ping", table)
+.image ./images/pingpong3.gif
+
+* Ping-Pong
+        for i := 0; i < 100; i++ {
+            go player(table)
+        }
+.image ./images/pingpong100.gif
+
+* Fan-In
+.image ./images/gophermegaphones.jpg
+
+* Fan-In
+.play ./support/fan-in.go /START1/,/STOP1/
+
+* Fan-In
+.image ./images/fanin.gif
+
+
+* Workers. Fan-out
+.code ./support/fan-out.go /START1/,/STOP1/
+.code ./support/fan-out.go /START2/,/STOP2/
+
+* Workers. Fan-out
+.play ./support/fan-out.go /START3/,/STOP3/
+
+* Workers. Fan-out
+.image ./images/workers.gif
+
+
+* Workers. Fan-out
+    const (
+        WORKERS    = 5
+        SUBWORKERS = 3
+        TASKS      = 20
+        SUBTASKS   = 10
+    )
+.code ./support/workers.go /START1/,/STOP1/
+
+* Workers. Fan-out
+.code ./support/workers.go /START2/,/STOP2/
+
+* Workers. Fan-out
+.play ./support/workers.go /START3/,/STOP3/
+
+* Workers. Fan-out
+.image ./images/workers2.gif
+
+* Server
+.code ./support/server.go
+
+* Server
+.image ./images/servers.gif
+
+* Server
+.image ./images/servers2.gif
+
+
+* Server + Worker
+.image ./images/servers3.gif

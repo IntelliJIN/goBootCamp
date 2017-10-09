@@ -1,0 +1,231 @@
+SoftServe Golang Boot Camp
+
+Igor Kolinko
+SoftServe
+
+Igor Prozhoha
+SoftServe
+
+* Содержание
+- Немного истории Go
+- Особенности языка
+- Основы языка. Базовые типы.
+
+
+* Немного истории
+.image ./images/sensey.jpg
+
+* История. Закон Мура?
+.html ./html/CPU.html
+
+* Go?
+
+"Go (often referred to as golang) is an open source programming language
+created at Google in 2007 by Robert Griesemer, Rob Pike, and Ken Thompson. It
+is a compiled, statically typed language in the tradition of Algol and C, with
+garbage collection, limited structural typing, memory safety features and
+CSP-style concurrent programming features added."
+
+.link https://en.wikipedia.org/wiki/Go_(programming_language) Go Programming Language @ Wikipedia
+
+
+* Немного истории
+- Начал разрабатываться компанией Google в 2007
+- Первый публичный релиз в 2009
+- Проектированием занимались: Роберт Гризмер, Роб Пайк и Кен Томпсон
+- Go 1 вышел в 2012.
+
+
+* Особенности
+- Простой и понятный синтаксис
+- Статическая типизация
+- Компилируемый
+- Сборщик Мусора
+- CSP-style асинхронная модель
+
+
+* На данный момент поддерживает
+- Linux
+- MacOS
+- Windows
+- Android
+- FreeBSD
+- OpenBSD
+- DragonFly BSD
+- Plan9
+- Solaris
+
+
+* Базовые типы
+
+* Базовые типы: Целые числа
+.code ./support/integer.go /START1/,/STOP1/
+.play ./support/integer.go /START2/,/STOP2/
+
+* Базовые типы: Целые числа
+.play ./support/integerMinMax.go /START1/,/STOP1/
+
+
+* Базовые типы: Числа с плавающей точкой
+.code ./support/float.go /START1/,/STOP1/
+.play ./support/float.go /START2/,/STOP2/
+
+* Комплексные числа:
+.code ./support/complex.go /START1/,/STOP1/
+.play ./support/complex.go /START2/,/STOP2/
+
+
+* Базовые типы: Булевый тип
+.code ./support/bool.go /START1/,/STOP1/
+.play ./support/bool.go /START2/,/STOP2/
+
+* Базовые типы: Строки
+.code ./support/strings.go /START1/,/STOP1/
+.play ./support/strings.go /START2/,/STOP2/
+
+* Базовые типы: Строки
+.code ./support/stringsOperations.go /START1/,/STOP1/
+.play ./support/stringsOperations.go /START2/,/STOP2/
+
+* Базовые типы: Строки
+.code ./support/stringsOperations2.go /START1/,/STOP1/
+.play ./support/stringsOperations2.go /START2/,/STOP2/
+
+* Базовые типы: Константы
+
+Обьявление константы:
+
+    const pi = 3.1415
+
+Обьявление константы в блоке:
+
+    const (
+        firstConstant  = 2.71828
+        secondConstant = 1.2020569
+        thirdConstant  = 0.57721
+    )
+
+* Константы
+
+Magic declaration:
+
+    const (
+        a = 1
+        b
+        c = 2
+        d
+    )
+
+.play ./support/constants.go /START2/,/STOP2/
+
+* Константы: iota
+
+    const (
+        one = iota
+        two
+        _    // пустая константа
+        four
+    )
+
+.play ./support/constantsIota.go /START2/,/STOP2/
+
+
+* Композитные типы
+
+* Композитные типы: Arrays
+
+Массив это последовательность элементов одного типа фиксированной длинны.
+
+.code ./support/arrays.go /START1/,/STOP1/
+.play ./support/arrays.go /START2/,/STOP2/
+
+* Композитные типы: Arrays. Представление в памяти:
+
+.image ./images/array-memory-representation.png
+
+* Композитные типы: Arrays. Важная особенность
+
+.code ./support/arraysValue.go /START1/,/STOP1/
+.play ./support/arraysValue.go /START2/,/STOP2/
+.image ./images/scientist.jpg
+
+* Композитные типы: Slices
+
+.code ./support/slice.go /START1/,/STOP1/
+.play ./support/slice.go /START2/,/STOP2/
+
+* Композитные типы: Slicing slices
+
+.code ./support/sliceSlicing.go /START1/,/STOP1/
+.play ./support/sliceSlicing.go /START2/,/STOP2/
+
+* Композитные типы: Slices. Важная особенность
+
+.code ./support/slicePointer.go /START1/,/STOP1/
+.play ./support/slicePointer.go /START2 OMIT/,/STOP2 OMIT/
+.image ./images/scientist.jpg
+
+* Композитные типы: Slices. Важная особенность
+
+.code ./support/sliceCopy.go /START1/,/STOP1/
+.play ./support/sliceCopy.go /START2 OMIT/,/STOP2 OMIT/
+
+* Композитные типы: Slices. Важная особенность
+
+.code ./support/sliceOperations.go /START1/,/STOP1/
+.play ./support/sliceOperations.go /START2/,/STOP2/
+
+* Композитные типы: Slices. Важная особенность
+
+.code ./support/sliceCap.go /START1/,/STOP1/
+.play ./support/sliceCap.go /START2/,/STOP2/
+
+* Композитные типы: Slice внутри
+
+.html ./html/slice-internals.html
+
+
+*  Композитные типы: Maps
+
+    var m map[string]int
+
+.image ./images/map-scheme.png
+
+
+*  Композитные типы: Maps
+
+.code ./support/maps.go /START1/,/STOP1/
+.play ./support/maps.go /START2/,/STOP2/
+
+
+*  Композитные типы: Maps
+
+.code ./support/mapsTwo.go /START1/,/STOP1/
+.play ./support/mapsTwo.go /START2/,/STOP2/
+
+* Указатели
+Указатели "указывают" на участок в памяти, где хранится значение
+
+.code ./support/pointer.go /START1/,/STOP1/
+.play ./support/pointer.go /START2/,/STOP2/
+
+* Инструкции
+
+* Инструкции. If
+
+.play ./support/if.go /START1/,/STOP1/
+
+* Инструкции. For
+.code ./support/for.go /START1/,/STOP1/
+.play ./support/for.go /START2/,/STOP2/
+
+
+* Инструкции. For range
+.code ./support/forRange.go /START1/,/STOP1/
+.play ./support/forRange.go /START2/,/STOP2/
+
+* Инструкции. Switch
+.play ./support/switch.go /START1/,/STOP1/
+
+* Инструкции. Switch
+.play ./support/switchType.go /START1/,/STOP1/
