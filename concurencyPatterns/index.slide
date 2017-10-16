@@ -81,3 +81,66 @@ SoftServe
 
 * Server + Worker
 .image ./images/servers3.gif
+
+* Patterns
+
+*Ivan*Danyliuk*, [[https://divan.github.io/posts/go_concurrency_visualize][Visualizing Concurrency in Go]], 24 January 2016
+Slides from GopherCon'16: [[http://divan.github.io/talks/2016/gophercon][gophercon]]
+
+
+* Timing out
+.play ./support/TimeOut.go
+
+* Context
+
+  // A Context carries a deadline, cancelation signal, and request-scoped values
+  // across API boundaries. Its methods are safe for simultaneous use by multiple
+  // goroutines.
+  type Context interface {
+  	// Done returns a channel that is closed when this Context is canceled
+  	// or times out.
+  	Done() <-chan struct{} // HL
+
+  	// Err indicates why this context was canceled, after the Done channel
+  	// is closed.
+  	Err() error // HL
+
+  	// Deadline returns the time when this Context will be canceled, if any.
+  	Deadline() (deadline time.Time, ok bool) // HL
+
+  	// Value returns the value associated with key or nil if none.
+  	Value(key interface{}) interface{} // HL
+  }
+
+* Context. WithCancel()
+.play ./support/contextWithCancel.go /START/,/STOP/
+
+* Context. WithDeadline()
+.play ./support/contextWithDeadline.go /START/,/STOP/
+
+* Context. WithTimeOut()
+.play ./support/contextWithTimeOut.go /START/,/STOP/
+
+* Context. WithValue()
+.play ./support/contextWithValue.go /START/,/STOP/
+
+* Data Races
+Гонки относятся к числу наиболее распространенных и наиболее сложных для отладки типов ошибок в concurrency системах. Гонка данных возникает, когда два горутины получают доступ к одной и той же переменной одновременно, и по меньшей мере одно из обращений является записью.
+
+* Data Races. Examples
+
+* Data Races. Race on loop counter
+.play ./support/DataRaceInLoop.go
+
+* Data Races. Race on loop counter Fix
+.play ./support/DataRaceInLoopFix.go
+
+
+* Data Races. Detection
+
+  $ go test -race mypkg    // to test the package
+  $ go run -race mysrc.go  // to run the source file
+  $ go build -race mycmd   // to build the command
+  $ go install -race mypkg // to install the package
+
+
