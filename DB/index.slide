@@ -5,3 +5,150 @@ SoftServe
 
 Igor Prozhoha
 SoftServe
+
+* Database interface sql.DB
+.image ./images/gopherUA.jpeg 600 600
+
+* Database interface sql.DB
+To access databases in Go, you use a sql.DB. You use this type to create statements and transactions, execute queries, and fetch results. a *sql.DB* isn’t a database connection.
+
+* sql.DB
+- is not database connection.
+- it doesn’t map to notion of a “database” or “schema”.
+
+It’s an abstraction of the interface and existence of a database, which might be as varied as a local file, accessed through a network connection, or in-memory and in-process.
+
+* sql.DB
+- It opens and closes connections to the actual underlying database, via the driver.
+- It manages a pool of connections as needed, which may be a variety of things as mentioned.
+- You can use it to query the database that it represents, as well as creating statements and transactions
+
+* Importing a Database Driver
+	import (
+		"database/sql"
+		_ "github.com/mattn/go-sqlite3"
+	)
+
+* Database interface
+
+- Not a connection.
+- Open()
+- Close()
+- Query()
+- QueryRow()
+- Exec()
+
+Rows:
+
+- Next()
+- Scan()
+
+* Database. SQLite3. Connection.
+.play ./support/sqLiteInitial.go /START1/,/STOP1/
+
+* Database. SQLite3. Create Table
+.code ./support/sqLiteCreateTable.go /START1/,/STOP1/
+
+* Database. SQLite3. Insert
+.image ./images/Agent-smith.png
+
+* Database. SQLite3. Insert
+.play ./support/sqLiteCreateTable.go /START2/,/STOP2/
+
+* Database. SQLite3. Select
+.play ./support/sqLiteSelect.go /START1/,/STOP1/
+
+* Database. SQLite3. NullTime
+
+    type NullTime struct {
+        Time  time.Time
+        Valid bool // Valid is true if Time is not NULL
+    }
+
+    // Scan implements the Scanner interface.
+    func (nt *NullTime) Scan(value interface{}) error {
+        nt.Time, nt.Valid = value.(time.Time)
+        return nil
+    }
+
+    // Value implements the driver Valuer interface.
+    func (nt NullTime) Value() (driver.Value, error) {
+        if !nt.Valid {
+            return nil, nil
+        }
+        return nt.Time, nil
+    }
+
+* Database. SQLite3. Smith Clone
+.image ./images/Agent_Smith_Clone.jpg 400 500
+
+
+* Database. SQLite3. Smith Clone
+.play ./support/sqLiteInsert.go /START1/,/STOP1/
+.code ./support/sqLiteInsert.go /START2/,/STOP2/
+
+* Database. SQLite3. Upgrade Smith
+.image ./images/Smith_takes_over_oracle.jpg
+
+* Database. SQLite3. Upgrade Smith
+.play ./support/sqLiteUpdate.go /START1/,/STOP1/
+
+* Database. SQLite3. Select Smith's copies
+.play ./support/sqLiteSelectAll.go /START1/,/STOP1/
+
+* Database. SQLite3. Delete Smith
+.play ./support/sqLiteDelete.go /START1/,/STOP1/
+
+* Database. SQLite3. Transaction
+.play ./support/sqLiteTransaction.go /START1/,/STOP1/
+
+* Database. SQLite3. Be Careful!
+.image ./images/drop.png
+
+* Database. NoSQL. MemCache
+.image ./images/gopher.jpg
+
+* Database. MemCache. Driver
+
+    import (
+        "github.com/bradfitz/gomemcache/memcache"
+    )
+
+* Database. MemCache. Connect
+.play ./support/memCache.go /START1/,/STOP1/
+
+* Database. MemCache. Get
+.play ./support/memCacheGet.go /START1/,/STOP1/
+
+* Database. MemCache. Add
+.play ./support/memCacheAdd.go /START1/,/STOP1/
+
+* Database. MemCache. Increment/Decrement
+.play ./support/memCacheInc.go /START1/,/STOP1/
+
+* Database. SQL. SQL-builders
+    import (
+      "database/sql"
+      "gopkg.in/doug-martin/goqu.v4"
+      _ "gopkg.in/doug-martin/goqu.v4/adapters/sqlite3"
+    )
+.image ./images/gopherSQL2.png
+
+
+* Database. SQL-builders. SQL Gen
+.play ./support/sqlBuilder.go /START1/,/STOP1/
+
+* Database. SQL-builders. SQL Expressions
+.play ./support/sqlBuilderExp.go /START1/,/STOP1/
+
+* Database. SQL-builders. Scan
+.play ./support/sqlBuilderScan.go /START1/,/STOP1/
+
+* Database. SQL-builders. Insert
+.play ./support/sqlBuilderInsert.go /START1/,/STOP1/
+
+* Database. ORM
+.image ./images/gopherChina.png
+
+* Database. ORM
+.play ./support/ORM.go /START1/,/STOP1/
