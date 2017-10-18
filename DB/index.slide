@@ -150,5 +150,52 @@ Rows:
 * Database. ORM
 .image ./images/gopherChina.png
 
+* Database. ORM. User
+
+    type User struct {
+        UId        int       `gorm:"primary_key;column:uid"`
+        Username   string    `gorm:"column:username"`
+        DepartName string    `gorm:"column:depart_name"`
+        Purpose    string    `gorm:"column:purpose"`
+        Ability    string    `gorm:"column:ability"`
+        Created    time.Time `gorm:"column:created"`
+    }
+
 * Database. ORM
 .play ./support/ORM.go /START1/,/STOP1/
+
+* Database. ORM. Find
+
+    func FindByID(db *gorm.DB, id uint) {
+        user := User{}
+        err := db.Find(&user, id).Error
+        if err == gorm.ErrRecordNotFound {
+            fmt.Println("Record not found", id)
+        } else {
+            checkErr(err)
+        }
+        fmt.Printf("PrintByID: %+v, data: %+v\n", id, user)
+    }
+
+* Database. ORM
+.code ./support/ORM.go /START2/,/STOP2/
+
+* Database. ORM. Migrate
+
+    type Email struct {
+        gorm.Model
+        Email  string
+        UserID uint `gorm:"ForeignKey:UId"`
+    }
+
+    func (e *Email) TableName() string {
+        return "emails"
+    }
+
+    func (e *Email) BeforeSave() (err error) {
+        fmt.Println("trigger on before save")
+        return
+    }
+
+* Database. ORM. Migrate
+.play ./support/ORMMigrate.go /START1/,/STOP1/

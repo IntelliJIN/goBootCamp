@@ -26,7 +26,7 @@ func main() {
 		checkErr(err)
 	}
 	count := getCount(db)
-	fmt.Printf("System Error. Agent Smith have olready %v copies\n", count-1)
+	fmt.Printf("System Error. Agent Smith have already %v copies\n", count-1)
 	// STOP1 OMIT
 }
 
