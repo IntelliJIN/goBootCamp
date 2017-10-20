@@ -1,0 +1,373 @@
+SoftServe Golang Boot Camp
+
+Igor Kolinko
+SoftServe
+
+Igor Prozhoha
+SoftServe
+
+* Performance And Optimization
+.image ./images/vim-go.png
+
+* Performance. Benchmarks
+.code ./support/fib/fib.go
+
+* Performance. Benchmarks
+    package fib
+
+    import (
+        "testing"
+        //"bytes"
+    )
+
+    var result int
+
+    func BenchmarkFib10(b *testing.B) {
+    	// run the Fib function b.N times
+    	for n := 0; n < b.N; n++ {
+    		Fib(10)
+    	}
+    }
+
+* Performance. Benchmarks
+    $ go test -bench=. ./...
+    goos: darwin
+    goarch: amd64
+    BenchmarkFib10-4         3000000               419 ns/op
+
+
+* Performance. Benchmarks
+    $ go test -bench=. ./...
+    goos: darwin
+    goarch: amd64
+    BenchmarkFib1-4         1000000000               2.68 ns/op
+    BenchmarkFib2-4         200000000                6.98 ns/op
+    BenchmarkFib3-4         100000000               12.3 ns/op
+    BenchmarkFib15-4          300000              4587 ns/op
+    BenchmarkFib20-4           30000             52487 ns/op
+    BenchmarkFib40-4               2         771978654 ns/op
+
+* Performance. Benchmarks
+Each benchmark is run for a minimum of 1 second by default. If the second has not elapsed when the Benchmark function returns, the value of b.N is increased in the sequence 1, 2, 5, 10, 20, 50, … and the function run again.
+
+* Performance. Benchmarks
+    go test -bench=Fib40 -benchtime=20s ./...
+    goos: darwin
+    goarch: amd64
+    BenchmarkFib40-4              30         832179614 ns/op
+
+
+* Performance. Benchmarks. Trap
+
+    func BenchmarkFib(b *testing.B) {
+            for n := 0; n < b.N; n++ {
+                    Fib(n)
+            }
+    }
+
+    func BenchmarkFib(b *testing.B) {
+            Fib(b.N)
+    }
+
+
+* Performance. Benchmarks
+    go get -u golang.org/x/tools/...
+
+
+* Performance. Benchmarks
+    func BenchmarkFib10(b *testing.B) {
+        var r int
+        for n := 0; n < b.N; n++ {
+            // always record the result of Fib to prevent
+            // the compiler eliminating the function call.
+            r = Fib(10)
+        }
+        // always store the result to a package level variable
+        // so the compiler cannot eliminate the Benchmark itself.
+        result = r
+    }
+
+
+* Performance. Benchmarks
+    $ go test -bench=Fib10 -benchmem -benchtime=10s ./... > new.txt
+
+    $ go test -bench=Fib10 -benchmem  -benchtime=10s ./... >  old.txt
+
+    $ benchcmp old.txt new.txt
+    benchmark            old ns/op     new ns/op     delta
+    BenchmarkFib10-4     479           448           -6.47%
+
+    benchmark            old allocs     new allocs     delta
+    BenchmarkFib10-4     0              0              +0.00%
+
+    benchmark            old bytes     new bytes     delta
+    BenchmarkFib10-4     0             0             +0.00%
+
+* Performance. Benchmarks. Parallel
+
+    func BenchmarkFib10(b *testing.B) {
+        b.RunParallel(func(pb *testing.PB) {
+            for pb.Next() {
+                var r int
+                r = Fib(10)
+                result = r
+            }
+
+        })
+    }
+
+* Performance. Benchmarks. Parallel
+    $ go test -bench=Fib10 -cpu 1  ./...
+    goos: darwin
+    goarch: amd64
+    BenchmarkFib10   3000000               415 ns/op
+
+    $ go test -bench=Fib10 -cpu 2  ./...
+    goos: darwin
+    goarch: amd64
+    BenchmarkFib10-2        10000000               231 ns/op
+
+
+    $ go test -bench=Fib10 -cpu 3  ./...
+    goos: darwin
+    goarch: amd64
+    BenchmarkFib10-3        10000000               210 ns/op
+
+
+* Performance. Benchmarks. Strings
+
+    func BenchmarkSubstring(b *testing.B) {
+        for i := 0; i < b.N; i++ {
+            strings.Contains(haystack, "auctor")
+        }
+    }
+
+    func BenchmarkRegex(b *testing.B) {
+        for i := 0; i < b.N; i++ {
+            regexp.MatchString("auctor", haystack)
+        }
+    }
+
+
+    $ go test -bench=. -cpuprofile cpu.out
+    goos: darwin
+    goarch: amd64
+    BenchmarkSubstring-4     2000000               698 ns/op
+    BenchmarkRegex-4          100000             12596 ns/op
+
+    $ go tool pprof string.test cpu.out
+
+
+* Performance. Benchmarks.
+
+    var reg = regexp.MustCompile("auctor")
+
+    func BenchmarkRegex2(b *testing.B) {
+        for i := 0; i < b.N; i++ {
+            reg.MatchString(haystack)
+        }
+    }
+
+* Performance. Benchmarks.
+
+    $ go test -bench=. -cpuprofile cpu.out
+    goos: darwin
+    goarch: amd64
+    BenchmarkSubstring-4             2000000               709 ns/op
+    BenchmarkRegex-4                  200000             10808 ns/op
+    BenchmarkRegex2-4                2000000               866 ns/op
+
+
+* Performance. Benchmarks.
+    github.com/opennota/re2dfa
+
+* Performance. Benchmarks.
+    //re2dfa auctor main.matchAuctor string
+
+    func matchAuctor(s string) (end int) {
+    	end = -1
+    	var r rune
+    	var rlen int
+    	i := 0
+    	_, _, _ = r, rlen, i
+    	r, rlen = utf8.DecodeRuneInString(s[i:])
+    	if rlen == 0 {
+    		return
+    	}
+    	i += rlen
+    	switch {
+    	case r == 97:
+    		goto s2
+    	}
+    	return
+    s2:
+    	r, rlen = utf8.DecodeRuneInString(s[i:])
+    	if rlen == 0 {...
+
+
+* Performance. Benchmarks.
+    func BenchmarkGeneratedRegex(b *testing.B) {
+        for i := 0; i < b.N; i++ {
+            matchAuctor(haystack)
+        }
+    }
+
+* Performance. Benchmarks.
+    $ go test -bench=. -cpuprofile cpu.out -benchmem
+    goos: darwin
+    goarch: amd64
+    BenchmarkSubstring-4         2000000           722 ns/op           0 B/op          0 allocs/op
+    BenchmarkRegex-4              100000         11106 ns/op       41104 B/op         28 allocs/op
+    BenchmarkRegex2-4            2000000           883 ns/op           0 B/op          0 allocs/op
+    BenchmarkGeneratedRegex-4   200000000            6.22 ns/op        0 B/op          0 allocs/op
+
+
+
+* Performance. net/http/pprof
+    package main
+
+    import (
+    "net/http"
+    _ "net/http/pprof"
+    )
+
+    func Handler(w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusOK)
+    }
+
+    func main() {
+        http.HandleFunc("/", Handler)
+        http.ListenAndServe(":8080", nil)
+    }
+
+* Performance. Pprof Web.
+
+    go tool pprof http://localhost:6060/debug/pprof/heap
+Look at a 30-second CPU profile:
+
+    go tool pprof http://localhost:6060/debug/pprof/profile
+Look at the goroutine blocking profile, after calling runtime.SetBlockProfileRate in your program:
+
+    go tool pprof http://localhost:6060/debug/pprof/block
+Holders of contended mutexes, after calling runtime.SetMutexProfileFraction in your program:
+
+    go tool pprof http://localhost:6060/debug/pprof/mutex
+
+Collect a 5-second execution trace:
+
+    wget http://localhost:6060/debug/pprof/trace?seconds=5
+
+* Performance. JSON.
+
+    package structs
+
+    type User struct {
+        Name string `json:"name"`
+        Age int `json:"age"`
+        Children []User `json:"children"`
+    }
+
+    type Task struct {
+        Title string `json:"title"`
+        Done bool `json:"done"`
+        Important bool `json:"important"`
+    }
+
+    type Json struct {
+        User User `json:"user"`
+        Auth struct{
+            SessionID string `json:"session_id"`
+            CsrfToken string `json:"csrf_token"`
+        } `json:"auth"`
+        Tasks []Task
+    }
+
+* Performance. JSON.
+    //"encoding/json"
+    func Reflect(data Json) []byte {
+        bytes, _ := json.Marshal(data)
+        return bytes
+    }
+
+   func BenchmarkReflect(b *testing.B) {
+   	b.RunParallel(func(pb *testing.PB) {
+   		for pb.Next() {
+   			Reflect(data)
+   		}
+   	})
+   }
+
+* Performance. JSON.
+
+    $ go test -bench=. -benchmem -cpu 1
+    goos: darwin
+    goarch: amd64
+    BenchmarkReflect      100000         22385 ns/op        3833 B/op     15 allocs/op
+
+
+* Performance. JSON.
+    github.com/mailru/easyjson
+
+easyjson -all structs.go
+
+* Performance. JSON. structs_easyjson
+    func easyjson6a975c40Encode(out *jwriter.Writer, in struct {
+        SessionID string `json:"session_id"`
+        CsrfToken string `json:"csrf_token"`
+    }) {
+        out.RawByte('{')
+        first := true
+        _ = first
+        if !first {
+            out.RawByte(',')
+        }
+        first = false
+        out.RawString("\"session_id\":")
+        out.String(string(in.SessionID))
+        if !first {
+            out.RawByte(',')
+        }
+        first = false
+        out.RawString("\"csrf_token\":")
+        out.String(string(in.CsrfToken))
+        out.RawByte('}')
+    }
+
+* Performance. JSON. structs_easyjson
+
+    $ go test -bench=. -benchmem -cpu 1
+    goos: darwin
+    goarch: amd64
+    BenchmarkGenerated    200000          6122 ns/op        1920 B/op      6 allocs/op
+    BenchmarkReflect      100000         19070 ns/op        3833 B/op     15 allocs/op
+
+
+
+    $ go test -bench=. -benchmem -cpu 4
+    goos: darwin
+    goarch: amd64
+    BenchmarkGenerated-4  500000          2857 ns/op        1922 B/op      6 allocs/op
+    BenchmarkReflect-4    200000          9126 ns/op        3838 B/op     15 allocs/op
+
+* Performance. Memory
+
+    go test -bench=. -benchmem -memprofile=mem.out
+    go tool pprof -alloc_space json.test mem.out
+
+* Performance. Memory
+    (pprof) top
+    Showing nodes accounting for 1.34GB, 99.93% of 1.34GB total
+    Dropped 4 nodes (cum <= 0.01GB)
+    Showing top 10 nodes out of 27
+          flat  flat%   sum%        cum   cum%
+        0.74GB 54.90% 54.90%     0.78GB 58.03%  github.com/mailru/easyjson/buffer.(*Buffer).BuildBytes /Users/ikolin/go/src/github.com/mailru/easyjson/buffer/pool.go
+        0.22GB 16.68% 71.58%     0.22GB 16.75%  github.com/mailru/easyjson/buffer.getBuf /Users/ikolin/go/src/github.com/mailru/easyjson/buffer/pool.go
+        0.15GB 11.08% 82.67%     0.15GB 11.08%  bytes.makeSlice /Users/ikolin/go1.9/go/src/bytes/buffer.go
+        0.13GB  9.32% 91.99%     0.35GB 26.08%  github.com/mailru/easyjson/buffer.(*Buffer).EnsureSpace /Users/ikolin/go/src/github.com/mailru/easyjson/buffer/pool.go
+        0.04GB  3.13% 95.12%     0.04GB  3.13%  github.com/mailru/easyjson/buffer.putBuf /Users/ikolin/go/src/github.com/mailru/easyjson/buffer/pool.go
+        0.02GB  1.86% 96.98%     0.02GB  1.86%  encoding/json.stateBeginValue /Users/ikolin/go1.9/go/src/encoding/json/scanner.go
+        0.02GB  1.35% 98.32%     0.41GB 30.50%  encoding/json.Marshal /Users/ikolin/go1.9/go/src/encoding/json/encode.go
+        0.01GB  0.84% 99.16%     0.42GB 31.34%  goBootCamp/goPerformance/support/json.Reflect /Users/ikolin/go/src/goBootCamp/goPerformance/support/json/main.go
+        0.01GB  0.76% 99.93%     0.18GB 13.70%  encoding/json.compact /Users/ikolin/go1.9/go/src/encoding/json/indent.go
+             0     0% 99.93%     0.15GB 11.08%  bytes.(*Buffer).Write /Users/ikolin/go1.9/go/src/bytes/buffer.go
+

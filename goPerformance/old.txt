@@ -1,0 +1,5 @@
+goos: darwin
+goarch: amd64
+BenchmarkFib10-4   	30000000	       479 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	goBootCamp/goPerformance/support	14.791s
