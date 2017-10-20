@@ -371,3 +371,96 @@ easyjson -all structs.go
         0.01GB  0.76% 99.93%     0.18GB 13.70%  encoding/json.compact /Users/ikolin/go1.9/go/src/encoding/json/indent.go
              0     0% 99.93%     0.15GB 11.08%  bytes.(*Buffer).Write /Users/ikolin/go1.9/go/src/bytes/buffer.go
 
+
+* Performance. Print
+    package main
+
+    import (
+        "bytes"
+        "fmt"
+        "testing"
+    )
+
+    func BenchmarkPrint(b *testing.B) {
+        var buf bytes.Buffer
+        var s string = "test string"
+        for i := 0; i < b.N; i++ {
+            buf.Reset()
+            fmt.Fprintf(&buf, "string is: %s", s)
+        }
+    }
+
+* Performance. Print
+
+    $ go test -bench=. -benchmem -memprofile=mem.out
+    goos: darwin
+    goarch: amd64
+    BenchmarkPrint-4    10000000           148 ns/op          16 B/op      1 allocs/op
+
+
+* Performance. Print
+
+    package main
+
+    import (
+        "bytes"
+        "testing"
+    )
+
+    func BenchmarkPrint(b *testing.B) {
+        var buf bytes.Buffer
+        var s string = "test string"
+        for i := 0; i < b.N; i++ {
+            buf.Reset()
+            buf.Write([]byte("string is: " + s))
+        }
+    }
+
+* Performance. Print
+    $ go test -bench=. -benchmem -memprofile=mem.out
+    goos: darwin
+    goarch: amd64
+    BenchmarkPrint-4    30000000            44.9 ns/op         0 B/op      0 allocs/op
+
+
+* Performance. Trace
+
+    "github.com/mkevac/debugcharts"
+
+* Performance. Trace
+
+    package main
+
+    import (
+        "net/http"
+        _ "net/http/pprof"
+        "time"
+        _ "github.com/mkevac/debugcharts"
+    )
+
+    func CPUHogger() {
+        var acc uint64
+        t := time.Tick(2 * time.Second)
+        for {
+            select {
+            case <-t:
+                time.Sleep(50 * time.Millisecond)
+            default:
+                acc++
+            }
+        }
+    }
+
+    func main() {
+        go CPUHogger()
+        go CPUHogger()
+        http.ListenAndServe("0.0.0.0:8181", nil)
+    }
+
+* Performance. Trace
+    go build ...
+    curl http://localhost:8181/debug/pprof/trace?seconds=10 -o trace.out
+    go tool trace -http "0.0.0.0:8080" ./main trace.out
+
+* Performance. Trace
+.image ./images/trace.png
