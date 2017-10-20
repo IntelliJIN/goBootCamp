@@ -20,8 +20,6 @@ SoftServe
         //"bytes"
     )
 
-    var result int
-
     func BenchmarkFib10(b *testing.B) {
     	// run the Fib function b.N times
     	for n := 0; n < b.N; n++ {
@@ -461,6 +459,9 @@ easyjson -all structs.go
     go build ...
     curl http://localhost:8181/debug/pprof/trace?seconds=10 -o trace.out
     go tool trace -http "0.0.0.0:8080" ./main trace.out
+
+* Performance. Trace
+.image ./images/root.png
 
 * Performance. Trace
 .image ./images/trace.png
